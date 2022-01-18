@@ -7,18 +7,50 @@
 
 @code{
 
+    protected enum Sort
+    {
+        Ascending,
+        Descending
+    }
+
     protected List<BlogPost> posts = new List<BlogPost>();
+
+    protected Sort Sorter = Sort.Ascending;
+
+    protected int numOfPosts = 0;
     protected async Task AddSomePosts()
     {
-        for (var i = 0; i < 10; i++)
+        int r = new Random().Next(1, 10);
+        
+        for (var i = 0; i < r; i++)
         {
             await api.SaveBlogPostAsync(BlogPostFactory.Create());
         }
+
+        await OnInitializedAsync();
+    }
+
+    protected async Task DeletePost(BlogPost p)
+    {
+        await api.DeleteBlogPostAsync(p);
+        await OnInitializedAsync();
+    }
+
+    private void SortPosts()
+    {
+        Sorter = GetSorter();
+        posts = Sorter == Sort.Ascending ? posts.OrderBy(x => x.Id).ToList() : posts.OrderByDescending(x => x.Id).ToList();
+    }
+
+    protected Sort GetSorter()
+    {
+        return Sorter == Sort.Ascending ? Sort.Descending : Sort.Ascending;
     }
 
     protected override async Task OnInitializedAsync()
     {
-        posts = await api.GetBlogPostsAsync(10, 0);
+        numOfPosts = await api.GetBlogPostCountAsync();
+        posts = await api.GetBlogPostsAsync(numOfPosts, 0);
         await base.OnInitializedAsync();
     }
 
@@ -28,7 +60,11 @@
 
 
 <div>
+    <p>Num of Posts: @numOfPosts</p>
+</div>
+<div>
     <button class="btn btn-danger" @onclick="AddSomePosts">Add some fake posts</button>
+    <button class="btn btn-info" @onclick="SortPosts">Sort @GetSorter().ToString()</button>
 </div>
 <br />
 
@@ -37,8 +73,9 @@
     {
         <div class="card" >
             <div class="card-body">
-                <h5 class="card-title">@p.Title</h5>
+                <h5 class="card-title"><b>#@p.Id</b> | <i>@p.Title</i></h5>
                 <p class="card-text">@p.Text</p>
+                <button class="btn btn-danger" @onclick="() => DeletePost(p)">Delete</button>
             </div>
         </div>
         <br />
