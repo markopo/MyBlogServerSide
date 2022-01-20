@@ -1,0 +1,34 @@
+@page "/Post/{BlogPostId:int}"
+
+@using MyBlog.Data.Interfaces
+@using MyBlog.Data.Models
+@inject IMyBlogApi api
+
+@if (BlogPost != null)
+{
+    <div class="jumbotron">
+        <h1 class="display-4">@BlogPost.Title</h1>
+        <p class="lead">@BlogPost.Text</p>
+    </div>
+}
+else
+{
+    <div>404 - Not Found</div>
+}
+
+@code {
+    
+    [Parameter]
+    public int BlogPostId { get; set; }
+    
+    public BlogPost BlogPost { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        BlogPost = await api.GetBlogPostAsync(BlogPostId);
+        
+        await base.OnParametersSetAsync();
+    }
+
+}
