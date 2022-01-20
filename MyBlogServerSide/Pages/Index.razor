@@ -10,12 +10,12 @@
 
     protected ElementReference addAlert;
     
-    protected int numOfPosts = 0;
+    private Virtualize<BlogPost> BlogPostContainer { get; set; }
+    
+    private int numOfPosts { get; set; }
 
     protected string AlertMessage = "";
-    
-   
-
+ 
     protected async Task AddSomePosts()
     {
         int r = new Random().Next(1, 10);
@@ -27,7 +27,8 @@
 
         AlertMessage = $@"{r} posts created!";
 
-        await OnInitializedAsync();
+        await SetBlogPostCount();
+        await BlogPostContainer.RefreshDataAsync();
         
         await addAlert.FocusAsync();
     }
@@ -37,22 +38,23 @@
         AlertMessage = String.Empty;
     }
 
-    protected async Task DeletePost(BlogPost p)
+    private async Task SetBlogPostCount()
     {
-        await api.DeleteBlogPostAsync(p);
-        await OnInitializedAsync();
+        if (numOfPosts == 0)
+        {
+            numOfPosts = await api.GetBlogPostCountAsync();
+        }
     }
     
     protected override async Task OnInitializedAsync()
     {
-        numOfPosts = await api.GetBlogPostCountAsync();
+        await SetBlogPostCount();
         await base.OnInitializedAsync();
     }
-
+    
     private async ValueTask<ItemsProviderResult<BlogPost>> LoadPosts(ItemsProviderRequest request)
     {
-        var numP = await api.GetBlogPostCountAsync();
-        var num = Math.Min(request.Count, numP - request.StartIndex);
+        var num = Math.Min(request.Count, numOfPosts - request.StartIndex);
         var posts = await api.GetBlogPostsAsync(num, request.StartIndex);
         return new ItemsProviderResult<BlogPost>(posts, numOfPosts);
     }
@@ -91,7 +93,7 @@
 <br />
 
 <div>
-    <Virtualize ItemsProvider="LoadPosts" Context="p" >
+    <Virtualize @ref="BlogPostContainer" ItemsProvider="LoadPosts" Context="p" >
         <div class="card" >
             <div class="card-body">
                 <h5 class="card-title">
@@ -100,7 +102,6 @@
                     </a>
                 </h5>
                 <p class="card-text">@p.Text</p>
-                <button class="btn btn-danger" @onclick="() => DeletePost(p)">Delete</button>
             </div>
         </div>
         <br />

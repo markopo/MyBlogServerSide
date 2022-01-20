@@ -3,12 +3,14 @@
 @using MyBlog.Data.Interfaces
 @using MyBlog.Data.Models
 @inject IMyBlogApi api
+@inject NavigationManager NavManager
 
 @if (BlogPost != null)
 {
     <div class="jumbotron">
         <h1 class="display-4">@BlogPost.Title</h1>
         <p class="lead">@BlogPost.Text</p>
+         <button class="btn btn-danger" @onclick="() => DeletePost(BlogPost)">Delete</button>
     </div>
 }
 else
@@ -24,6 +26,11 @@ else
     public BlogPost BlogPost { get; set; }
 
 
+    protected async Task DeletePost(BlogPost p)
+    {
+        await api.DeleteBlogPostAsync(p);
+        NavManager.NavigateTo("/");
+    }
     protected override async Task OnParametersSetAsync()
     {
         BlogPost = await api.GetBlogPostAsync(BlogPostId);
