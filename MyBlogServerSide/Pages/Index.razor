@@ -10,16 +10,6 @@
 
     protected ElementReference addAlert;
     
-    protected enum Sort
-    {
-        Ascending,
-        Descending
-    }
-
-    protected List<BlogPost> posts = new List<BlogPost>();
-
-    protected Sort Sorter = Sort.Ascending;
-
     protected int numOfPosts = 0;
 
     protected string AlertMessage = "";
@@ -52,23 +42,19 @@
         await api.DeleteBlogPostAsync(p);
         await OnInitializedAsync();
     }
-
-    private void SortPosts()
-    {
-        Sorter = GetSorter();
-        posts = Sorter == Sort.Ascending ? posts.OrderBy(x => x.Id).ToList() : posts.OrderByDescending(x => x.Id).ToList();
-    }
-
-    protected Sort GetSorter()
-    {
-        return Sorter == Sort.Ascending ? Sort.Descending : Sort.Ascending;
-    }
-
+    
     protected override async Task OnInitializedAsync()
     {
         numOfPosts = await api.GetBlogPostCountAsync();
-        posts = await api.GetBlogPostsAsync(numOfPosts, 0);
         await base.OnInitializedAsync();
+    }
+
+    private async ValueTask<ItemsProviderResult<BlogPost>> LoadPosts(ItemsProviderRequest request)
+    {
+        var numP = await api.GetBlogPostCountAsync();
+        var num = Math.Min(request.Count, numP - request.StartIndex);
+        var posts = await api.GetBlogPostsAsync(num, request.StartIndex);
+        return new ItemsProviderResult<BlogPost>(posts, numOfPosts);
     }
 
 }
@@ -82,7 +68,6 @@
 <div>
     <div>
         <button class="btn btn-danger" @onclick="AddSomePosts">Add some fake posts</button>
-        <button class="btn btn-info" @onclick="SortPosts">Sort @GetSorter().ToString()</button>
     </div>
     
     <br/>
@@ -106,8 +91,7 @@
 <br />
 
 <div>
-    @foreach (var p in posts)
-    {
+    <Virtualize ItemsProvider="LoadPosts" Context="p" >
         <div class="card" >
             <div class="card-body">
                 <h5 class="card-title">
@@ -122,7 +106,6 @@
         <br />
         <hr />
         <br />
-    }
-    
+    </Virtualize>
 </div>
 
