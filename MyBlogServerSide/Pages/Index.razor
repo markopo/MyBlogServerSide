@@ -8,6 +8,8 @@
 
 @code{
 
+    protected ElementReference addAlert;
+    
     protected enum Sort
     {
         Ascending,
@@ -34,7 +36,10 @@
         }
 
         AlertMessage = $@"{r} posts created!";
+
         await OnInitializedAsync();
+        
+        await addAlert.FocusAsync();
     }
 
     protected void ClickClear()
@@ -82,6 +87,7 @@
     
     <br/>
 
+    <div @ref="addAlert">
     @if (!string.IsNullOrEmpty(AlertMessage))
     {
         <Alert Style="Alert.AlertStyle.Success">
@@ -94,6 +100,7 @@
             </ChildContent>
         </Alert>
     }
+    </div>
 
 </div>
 <br />
