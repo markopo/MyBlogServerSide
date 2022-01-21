@@ -1,0 +1,27 @@
+@page "/EditPerson"
+
+<div>
+    <h3>Person</h3>
+    <EditForm Model="personModel" OnValidSubmit="validSubmit">
+        
+        
+        <button type="submit"></button>
+    </EditForm>
+    
+</div>
+@code {
+    public class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+
+    var personModel = new Person();
+
+    private Task validSubmit()
+    {
+        
+        
+        return Task.CompletedTask;
+    }
+}
