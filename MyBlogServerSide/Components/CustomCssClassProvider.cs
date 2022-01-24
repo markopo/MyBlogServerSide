@@ -8,8 +8,8 @@ public class CustomCssClassProvider<ProviderType>: ComponentBase where ProviderT
     
     [CascadingParameter] 
     private EditContext CurrentEditContext { get; set; }
-    
-    public ProviderType Provider { get; set; }
+
+    public ProviderType Provider { get; set; } = new ProviderType();
 
     protected override void OnInitialized()
     {
