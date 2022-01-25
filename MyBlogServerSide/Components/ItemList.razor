@@ -3,7 +3,15 @@
 
 
 <h3>List</h3>
-<table>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
     <Virtualize Items="@Items" Context="item">
         <tr>
             <td>
@@ -17,6 +25,7 @@
             </td>
         </tr>
     </Virtualize>
+    </tbody>
 </table>
 
 
