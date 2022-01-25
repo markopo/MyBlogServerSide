@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">MyBlogServerSide</a>
+        <a class="navbar-brand" href="">My Blog at Sea Side</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -10,8 +10,18 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="admin/categories">
-                <span class="oi oi-home" aria-hidden="true"></span> Categories
+                <span class="oi oi-folder" aria-hidden="true"></span> Categories
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="admin/tags">
+                <span class="oi oi-tag" aria-hidden="true"></span> Tags
             </NavLink>
         </div>
     </nav>

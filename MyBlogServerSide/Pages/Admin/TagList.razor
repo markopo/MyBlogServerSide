@@ -1,4 +1,4 @@
-@page "/admin/categories"
+@page "/admin/tags"
 @using MyBlogServerSide.Components
 @using MyBlog.Data.Interfaces
 @using MyBlog.Data.Models
@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-6 col-md-8 col-sm-12">
-            <h2>Categories</h2>
+            <h2>Tags</h2>
         </div>
     </div>    
     <div class="row">
@@ -31,12 +31,12 @@
     </div>
     <div class="row">
         <div class="col-lg-6 col-md-8 col-sm-12">
-            <ItemList Items="Items" Context="context" DeleteEvent="Delete" SelectEvent="Select" ItemType="Category">
+            <ItemList Items="Items" Context="context" DeleteEvent="Delete" SelectEvent="Select" ItemType="Tag">
                 <ItemTemplate>
-                    <div class="category-list-name">
+                    <div>
                         <strong>
                             @{
-                                var item = context as Category;
+                                var item = context as Tag;
                                 if (item != null)
                                 {
                                     @item.Name
@@ -56,13 +56,13 @@
 
 @code {
 
-    private List<Category> Items { get; set; } = new List<Category>();
+    private List<Tag> Items { get; set; } = new List<Tag>();
 
-    public Category Item { get; set; } = new Category();
+    public Tag Item { get; set; } = new Tag();
 
     protected override async Task OnInitializedAsync()
     {
-        Items = await api.GetCategoriesAsync();
+        Items = await api.GetTagsAsync();
         await base.OnInitializedAsync();
     }
     
@@ -75,8 +75,8 @@
                 Items.Add(Item);
             }
 
-            await api.SaveCategoryAsync(Item);
-            Item = new Category();
+            await api.SaveTagAsync(Item);
+            Item = new Tag();
         }
         catch
         {
@@ -84,12 +84,12 @@
         }
     }
 
-    private async Task Delete(Category category)        
+    private async Task Delete(Tag tag)        
     {
         try
         {
-            await api.DeleteCategoryAsync(category);
-            Items.Remove(category);
+            await api.DeleteTagAsync(tag);
+            Items.Remove(tag);
         }
         catch
         {
@@ -98,13 +98,14 @@
         
     }
 
-    private Task Select(Category category)    
+    private Task Select(Tag tag)    
     {
         try
         {
-            Item = category;
+            Item = tag;
         } catch {}
         return Task.CompletedTask;
     }
     
+
 }
