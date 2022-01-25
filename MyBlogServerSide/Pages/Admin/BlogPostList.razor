@@ -1,0 +1,47 @@
+@page "/admin/blogposts"
+@using MyBlogServerSide.Components
+@using MyBlog.Data.Interfaces
+@using MyBlog.Data.Models
+@inject IMyBlogApi api
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <h2>BlogPosts</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <div class="list-group">
+                <Virtualize ItemsProvider="LoadPosts" Context="p">
+                    <a href="/admin/blogposts/@p.Id" class="list-group-item list-group-item-action">
+                        <b>#@p.Id</b> | <span>@p.Title</span>
+                    </a>
+                </Virtualize>  
+                
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    public int TotalBlogPosts { get; set; }
+
+    private async ValueTask<ItemsProviderResult<BlogPost>> LoadPosts(ItemsProviderRequest request)
+    {
+        if (TotalBlogPosts == 0)
+        {
+            TotalBlogPosts = await api.GetBlogPostCountAsync();
+        }
+        var numblogposts = Math.Min(request.Count,TotalBlogPosts - request.StartIndex);
+        var posts = await api.GetBlogPostsAsync(numblogposts,
+            request.StartIndex);
+        return new ItemsProviderResult<BlogPost>(posts, TotalBlogPosts);
+    }
+        
+    }
+}
