@@ -1,0 +1,149 @@
+@page "/admin/blogposts/new"
+@page "/admin/blogposts/{Id:int}"
+@using MyBlog.Data.Interfaces
+@using MyBlog.Data.Models
+@using MyBlogServerSide.Components
+@using Markdig
+@inject IMyBlogApi _api
+@inject NavigationManager _manager
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <h2>BlogPosts Edit</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12">
+          <EditForm Model="Post" OnValidSubmit="SaveBlogPost">
+              <div class="form-group">
+                  <DataAnnotationsValidator/>
+                  <CustomCssClassProvider ProviderType="BootstrapFieldCssClassProvider"/>
+              </div>
+              <div class="form-group">
+                  <label>Title:</label>      
+                  <InputText @bind-Value="Post.Title"/>
+              </div>
+              <div class="form-group">
+                  <label>PublishDate:</label>    
+                  <InputDate @bind-Value="Post.PublishDate"/>
+              </div>
+              <div class="form-group">
+                  <label>Category:</label>    
+                  <InputSelect disabled="disabled" @bind-Value="selectedCategory">
+                      <option value="0" disabled="disabled">None selected</option>
+                      @foreach (var category in Categories)
+                      {
+                          <option value="@category.Id">@category.Name</option>
+                      }
+                  </InputSelect>
+              </div>
+              <div class="form-group">
+                  <label>Tags:</label>    
+                  <ul class="list-group">
+                      @foreach (var tag in Tags)
+                      {
+                          <li class="list-group-item">
+                              <b>@tag.Name</b>
+                            @if (Post.Tags != null && Post.Tags.Any(t => t.Id == tag.Id))
+                           {
+                               <button class="btn float-right" type="button"
+                                       @onclick="() => Post.Tags.Remove(Post.Tags.Single(t => t.Id == tag.Id))">
+                                   Remove
+                               </button>
+                           }
+                           else
+                           {
+                               <button class="btn float-right" type="button" @onclick="() => Post.Tags.Add(tag)">Add</button>
+                           }
+                          </li>
+                      }
+                  </ul>             
+              </div>
+              <div class="form-group">
+                  <label>Text:</label>    
+                  <InputTextAreaOnInput style="min-height: 300px;" @bind-Value="Post.Text" @onkeyup="UpdateHTML">
+                  </InputTextAreaOnInput>  
+                  <div style="border: 2px dashed red; background: pink; margin: 10px 0; padding: 10px;">@((MarkupString)Markdig.Markdown.ToHtml(Post.Text, _pipeline))</div>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-success">Save</button>
+              </div>
+        </EditForm>
+            
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    BlogPost Post { get; set; } = new BlogPost
+    {
+        Title = string.Empty,
+        Text = string.Empty,
+        PublishDate = DateTime.Now,
+        Category = null,
+        Tags = new List<Tag>()
+    };
+
+    List<Category> Categories { get; set; } = new List<Category>();
+
+    List<Tag> Tags { get; set; } = new List<Tag>();
+
+    int selectedCategory = 0;
+    
+    string? markDownAsHtml { get; set; }
+
+    MarkdownPipeline _pipeline;
+    protected override Task OnInitializedAsync()
+    {
+        _pipeline = new MarkdownPipelineBuilder()
+                        .UseEmojiAndSmiley()
+                        .Build();
+        
+        return base.OnInitializedAsync();
+    }
+
+    protected void UpdateHTML()
+    {
+        markDownAsHtml = Markdig.Markdown.ToHtml(Post.Text, _pipeline);
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != null)
+        {
+            Post = await _api.GetBlogPostAsync(Id.Value);
+
+            if (Post.Category != null)
+            {
+                selectedCategory = Post.Category.Id;
+            }
+            UpdateHTML();
+        }
+        Categories = await _api.GetCategoriesAsync();
+        Tags = await _api.GetTagsAsync();
+        await base.OnParametersSetAsync();
+    }
+
+    public async Task SaveBlogPost()
+    {
+        if (selectedCategory != 0 && Categories != null)
+        {
+            var category = Categories.FirstOrDefault(c => c.Id == selectedCategory);
+
+            if (category != null)
+            {
+                Post.Category = category;
+            }
+        }
+        
+        await _api.SaveBlogPostAsync(Post);
+        _manager.NavigateTo("/admin/blogposts");
+    }
+    
+
+}
