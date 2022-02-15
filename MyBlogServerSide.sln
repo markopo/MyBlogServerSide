@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlogWebAssembly", "MyBlog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlog.Data", "MyBlog.Data\MyBlog.Data.csproj", "{7C280FB6-1000-48C1-8AA4-524208D45B24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBlogWebApi", "MyBlogWebApi\MyBlogWebApi.csproj", "{82C4DFFD-ED83-4467-9DBD-459BA0B80F5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7C280FB6-1000-48C1-8AA4-524208D45B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C280FB6-1000-48C1-8AA4-524208D45B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C280FB6-1000-48C1-8AA4-524208D45B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82C4DFFD-ED83-4467-9DBD-459BA0B80F5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82C4DFFD-ED83-4467-9DBD-459BA0B80F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82C4DFFD-ED83-4467-9DBD-459BA0B80F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82C4DFFD-ED83-4467-9DBD-459BA0B80F5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
