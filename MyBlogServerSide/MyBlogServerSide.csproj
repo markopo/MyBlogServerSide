@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <PackageReference Include="Markdig" Version="0.27.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.2" />
     </ItemGroup>
 
 </Project>
