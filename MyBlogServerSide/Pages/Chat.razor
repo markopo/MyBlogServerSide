@@ -1,6 +1,8 @@
 @page "/Chat"
 @using Microsoft.AspNetCore.SignalR.Client
+@using MyBlog.Data
 @inject NavigationManager _navigationManager
+@inject ChatService _chatService
 @implements IAsyncDisposable
 
 <PageTitle>Index</PageTitle>
@@ -36,6 +38,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        messages = (await _chatService.GetChats()).Select(c => $"{c.User}: {c.Message}").ToList();
+        
         hubConnection = new HubConnectionBuilder()
             .WithUrl(_navigationManager.ToAbsoluteUri("/chathub"))
             .Build();

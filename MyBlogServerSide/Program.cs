@@ -12,6 +12,7 @@ builder.Services
         opt.UseSqlite("Data Source=../MyBlog.db"));
 
 builder.Services.AddScoped<IMyBlogApi, MyBlogApiServerSide>();
+builder.Services.AddScoped<ChatService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

@@ -15,6 +15,8 @@ public class MyBlogDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Tag> Tags { get; set; }
     
+    public DbSet<Chat> Chats { get; set; }
+
 }
 
 public class MyBlogDbContextFactory : IDesignTimeDbContextFactory<MyBlogDbContext>
