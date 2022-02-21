@@ -37,4 +37,6 @@ public static class HttpClientExtensions
 
     private static HttpContent Serialize(object data) =>
         new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+    
+    
 }
