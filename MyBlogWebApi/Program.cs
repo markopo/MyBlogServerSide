@@ -1,6 +1,9 @@
+using System.Reflection;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Data;
 using MyBlog.Data.Interfaces;
+using MyBlogWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,10 @@ builder.Services
         opt.UseSqlite("Data Source=../MyBlog.db"));
 
 builder.Services.AddScoped<IMyBlogApi, MyBlogApiServerSide>();
+
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+
+builder.Services.AddTransient<INotifierMediatorService, NotifierMediatorService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
